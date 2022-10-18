@@ -1,3 +1,4 @@
+using BervProject.MergePDFOnline.Utils;
 using Google.Apis.Auth.AspNetCore3;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Download;
@@ -51,29 +52,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
-var parentId = "0ByphvyJcG2Haa3B0WVFYRWZsaFk";
-
 app.MapGet("/drive", [GoogleScopedAuthorize(DriveService.ScopeConstants.Drive)] async ([FromServices] IGoogleAuthProvider auth) =>
 {
     var cred = await auth.GetCredentialAsync();
@@ -83,7 +61,7 @@ app.MapGet("/drive", [GoogleScopedAuthorize(DriveService.ScopeConstants.Drive)] 
         HttpClientInitializer = cred
     });
     var fileListRequest = driveService.Files.List();
-    fileListRequest.Q = $"mimeType='application/pdf' and '{parentId}' in parents and name contains '[Cert]'";
+    fileListRequest.Q = builder.Configuration["GoogleDrive:Query"];
     fileListRequest.Fields = "files(id,name,trashed)";
     fileListRequest.OrderBy = "name";
     var response = await fileListRequest.ExecuteAsync();
@@ -91,71 +69,10 @@ app.MapGet("/drive", [GoogleScopedAuthorize(DriveService.ScopeConstants.Drive)] 
     {
         return null;
     }
-    var outputFile = new MemoryStream();
-    var pdfDocument = new PdfDocument(new PdfWriter(outputFile));
-    foreach (var file in response.Files)
-    {
-        if (file.Trashed == true)
-        {
-            Console.WriteLine($"File {file.Id}:{file.Name} is ignored because already deleted!");
-            continue;
-        }
-        try
-        {
-            Console.WriteLine(file.Id);
-            var downloaded = DownloadFile(driveService, file.Id);
-            var copiedDocument = new PdfDocument(new PdfReader(downloaded));
-            copiedDocument.CopyPagesTo(1, copiedDocument.GetNumberOfPages(), pdfDocument);
-            copiedDocument.Close();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"{file.Name}: {ex.Message}");
-        }
-    }
-    Console.WriteLine(pdfDocument.GetNumberOfPages());
-    pdfDocument.Close();
-    return Results.File(outputFile.ToArray(), "application/pdf");
+    var output = GoogleDriveUtils.GetAllFiles(driveService, response.Files);
+    return Results.File(output, "application/pdf");
 })
 .WithName("GetDrive")
 .WithOpenApi();
 
 app.Run();
-
-static MemoryStream DownloadFile(DriveService driveService, string fileId)
-{
-    var stream = new MemoryStream();
-    var getFile = driveService.Files.Get(fileId);
-
-    getFile.MediaDownloader.ProgressChanged +=
-                progress =>
-                {
-                    switch (progress.Status)
-                    {
-                        case DownloadStatus.Downloading:
-                            {
-                                Console.WriteLine(progress.BytesDownloaded);
-                                break;
-                            }
-                        case DownloadStatus.Completed:
-                            {
-                                Console.WriteLine("Download complete.");
-                                break;
-                            }
-                        case DownloadStatus.Failed:
-                            {
-                                Console.WriteLine("Download failed.");
-                                break;
-                            }
-                    }
-                };
-
-    getFile.Download(stream);
-    stream.Position = 0;
-    return stream;
-}
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
