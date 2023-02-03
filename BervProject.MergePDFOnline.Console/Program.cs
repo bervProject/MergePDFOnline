@@ -8,7 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json");
+    .AddJsonFile("appsettings.json")
+    .AddEnvironmentVariables();
 
 var config = configuration.Build();
 
