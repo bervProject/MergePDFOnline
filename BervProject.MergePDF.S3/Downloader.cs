@@ -24,7 +24,7 @@ public class Downloader : IDownloader
     public async Task<IReadOnlyCollection<Stream>> DownloadAsync(string folderPath)
     {
         var resultData = new List<Stream>();
-        var listObjectRequest = new ListObjectsRequest
+        var listObjectRequest = new ListObjectsV2Request
         {
             BucketName = _s3Settings.BucketName,
             Prefix = folderPath
@@ -33,7 +33,7 @@ public class Downloader : IDownloader
 
         do
         {
-            var response = await _s3Service.ListObjectsAsync(listObjectRequest);
+            var response = await _s3Service.ListObjectsV2Async(listObjectRequest);
             var objectsCount = response.S3Objects.Count;
             _logger.LogInformation("Get objects: {ObjectsCount}", objectsCount);
             foreach (var s3Object in response.S3Objects)
@@ -57,8 +57,8 @@ public class Downloader : IDownloader
                 }
             }
 
-            listObjectRequest.Marker = response.NextMarker;
-            getAll = string.IsNullOrEmpty(response.NextMarker);
+            listObjectRequest.ContinuationToken = response.NextContinuationToken;
+            getAll = string.IsNullOrEmpty(response.NextContinuationToken);
         } while (!getAll);
 
         return resultData;
