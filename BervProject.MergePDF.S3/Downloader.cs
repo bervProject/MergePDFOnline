@@ -12,7 +12,7 @@ public class Downloader : IDownloader
     private readonly ILogger<Downloader> _logger;
     private readonly IAmazonS3 _s3Service;
     private readonly S3Settings _s3Settings;
-    
+
     public Downloader(IOptions<S3Settings> s3Settings, IAmazonS3 s3Service, ILogger<Downloader> logger)
     {
         _s3Settings = s3Settings.Value;
@@ -30,7 +30,7 @@ public class Downloader : IDownloader
             Prefix = folderPath
         };
         bool getAll;
-        
+
         do
         {
             var response = await _s3Service.ListObjectsAsync(listObjectRequest);

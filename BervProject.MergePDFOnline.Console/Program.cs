@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 var configuration = new ConfigurationBuilder()
-    .AddJsonFile($"appsettings.json");
+    .AddJsonFile("appsettings.json");
 
 var config = configuration.Build();
 
@@ -19,6 +19,7 @@ serviceCollection.Configure<S3Settings>(config.GetSection("S3"));
 serviceCollection.AddAWSService<IAmazonS3>();
 serviceCollection.AddScoped<IDownloader, Downloader>();
 serviceCollection.AddScoped<IPdfMerger, PdfMerger>();
+serviceCollection.AddScoped<IUploader, Uploader>();
 serviceCollection.AddScoped<IMerger, Merger>();
 
 var serviceProvider = serviceCollection.BuildServiceProvider();
