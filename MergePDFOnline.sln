@@ -5,6 +5,14 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BervProject.MergePDFOnline", "BervProject.MergePDFOnline\BervProject.MergePDFOnline.csproj", "{AA9FAEA7-F9EC-408A-AB08-9B84CF7B971B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BervProject.MergePDF", "BervProject.MergePDF\BervProject.MergePDF.csproj", "{CCC88D06-4324-47DE-B184-696516A863D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BervProject.MergePDF.GDrive", "BervProject.MergePDF.GDrive\BervProject.MergePDF.GDrive.csproj", "{FE530471-6D5A-42E8-B6B0-D1A13C42050B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BervProject.MergePDFOnline.Console", "BervProject.MergePDFOnline.Console\BervProject.MergePDFOnline.Console.csproj", "{E7F5055E-E4D1-4BF0-87F0-C74941AD7583}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BervProject.MergePDF.S3", "BervProject.MergePDF.S3\BervProject.MergePDF.S3.csproj", "{8C91403F-DABF-48D0-A48C-000D5D2056F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +23,22 @@ Global
 		{AA9FAEA7-F9EC-408A-AB08-9B84CF7B971B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA9FAEA7-F9EC-408A-AB08-9B84CF7B971B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA9FAEA7-F9EC-408A-AB08-9B84CF7B971B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCC88D06-4324-47DE-B184-696516A863D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCC88D06-4324-47DE-B184-696516A863D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCC88D06-4324-47DE-B184-696516A863D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCC88D06-4324-47DE-B184-696516A863D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE530471-6D5A-42E8-B6B0-D1A13C42050B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE530471-6D5A-42E8-B6B0-D1A13C42050B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE530471-6D5A-42E8-B6B0-D1A13C42050B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE530471-6D5A-42E8-B6B0-D1A13C42050B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7F5055E-E4D1-4BF0-87F0-C74941AD7583}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7F5055E-E4D1-4BF0-87F0-C74941AD7583}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7F5055E-E4D1-4BF0-87F0-C74941AD7583}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7F5055E-E4D1-4BF0-87F0-C74941AD7583}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C91403F-DABF-48D0-A48C-000D5D2056F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C91403F-DABF-48D0-A48C-000D5D2056F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C91403F-DABF-48D0-A48C-000D5D2056F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C91403F-DABF-48D0-A48C-000D5D2056F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,31 @@
+name: Weekly Merge
+on:
+  schedule:
+    - cron: 0 0 1 * *
+  workflow_dispatch: 
+jobs:
+  merge_weekly:
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: write   # This is required for requesting the JWT
+      contents: read    # This is required for actions/checkout
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.0.x'
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: ${{ secrets.AWS_ROLE_SESSION_NAME }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: Merge Now
+        run: dotnet run --project BervProject.MergePDFOnline.Console
+        env:
+          S3__BucketName: ${{ secrets.S3_BUCKET_NAME }}
