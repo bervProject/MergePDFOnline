@@ -40,6 +40,11 @@ public class Downloader : IDownloader
             {
                 try
                 {
+                    if (s3Object.Size <= 0)
+                    {
+                        _logger.LogInformation("S3 Object {Key} has size below 0", s3Object.Key);
+                        continue;
+                    }
                     var req = new GetObjectRequest
                     {
                         BucketName = s3Object.BucketName,
