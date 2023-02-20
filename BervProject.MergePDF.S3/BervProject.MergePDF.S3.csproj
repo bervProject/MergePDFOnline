@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AWSSDK.S3" Version="3.7.103.11" />
+      <PackageReference Include="AWSSDK.S3" Version="3.7.103.13" />
     </ItemGroup>
 
     <ItemGroup>
