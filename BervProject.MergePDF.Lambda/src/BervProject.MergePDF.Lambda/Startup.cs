@@ -18,15 +18,20 @@ namespace BervProject.MergePDF.Lambda
         public void ConfigureServices(IServiceCollection services)
         {
             var builder = new ConfigurationBuilder()
-                                        .AddJsonFile("appsettings.json")
+                                        .AddJsonFile("appsettings.json", true)
                                         .AddEnvironmentVariables();
 
             //// Add AWS Systems Manager as a potential provider for the configuration. This is 
             //// available with the Amazon.Extensions.Configuration.SystemsManager NuGet package.
-            builder.AddSystemsManager("/mergepdf/settings");
+            // builder.AddSystemsManager("/mergepdf/settings");
 
             var configuration = builder.Build();
             services.AddSingleton<IConfiguration>(configuration);
+            services.AddLogging(logger =>
+            {
+                logger.AddLambdaLogger();
+                logger.SetMinimumLevel(LogLevel.Debug);
+            });
             services.Configure<S3Settings>(configuration.GetSection("S3"));
             services.AddAWSService<IAmazonS3>();
             services.AddScoped<IDownloader, Downloader>();
