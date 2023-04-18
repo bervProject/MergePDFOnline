@@ -33,7 +33,8 @@ namespace BervProject.MergePDF.Infra
             var pdfMergerLambdaFunction = new Function(this, "PdfMerger", new FunctionProps
             {
                 Runtime = Runtime.DOTNET_6,
-                Timeout = Duration.Minutes(3),
+                Timeout = Duration.Minutes(1),
+                MemorySize = 512,
                 Handler = "BervProject.MergePDF.Lambda::BervProject.MergePDF.Lambda.Functions_Default_Generated::Default",
                 Code = Code.FromAsset(Directory.GetCurrentDirectory(), new Amazon.CDK.AWS.S3.Assets.AssetOptions
                 {
