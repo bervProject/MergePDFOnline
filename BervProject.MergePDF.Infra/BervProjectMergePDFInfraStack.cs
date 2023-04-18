@@ -26,7 +26,7 @@ namespace BervProject.MergePDF.Infra
                     "-c",
                     " dotnet tool install -g Amazon.Lambda.Tools"+
                     " && cd BervProject.MergePDF.Lambda/src/BervProject.MergePDF.Lambda" +
-                    " && dotnet build"+
+                    " && dotnet build --configuration Release"+
                     " && dotnet lambda package --output-package /asset-output/function.zip"
                     }
             };
