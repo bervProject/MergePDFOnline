@@ -1,0 +1,44 @@
+name: 'CDK'
+on:
+  push:
+    branches:
+    - main
+env:
+  BucketName: ${{ secrets.MERGE_PDF_BUCKET }}
+
+jobs:
+  cdk:
+    name: 'CDK'
+    runs-on: ubuntu-22.04
+    environment: production
+    permissions:
+      id-token: write   # This is required for requesting the JWT
+      contents: read    # This is required for actions/checkout
+    defaults:
+      run:
+        shell: bash
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+    - uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+        dotnet-quality: 'preview'
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        role-session-name: ${{ secrets.AWS_ROLE_SESSION_NAME }}
+        aws-region: 'ap-southeast-3'
+    - name: Install CDK
+      run: |
+        npm install -g aws-cdk
+        cdk doctor
+    - name: Synth
+      run: cdk synth
+    - name: Diff
+      run: cdk diff
+    - name: Deploy
+      run: cdk deploy
+

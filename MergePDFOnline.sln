@@ -3,15 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BervProject.MergePDFOnline", "BervProject.MergePDFOnline\BervProject.MergePDFOnline.csproj", "{AA9FAEA7-F9EC-408A-AB08-9B84CF7B971B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BervProject.MergePDFOnline", "BervProject.MergePDFOnline\BervProject.MergePDFOnline.csproj", "{AA9FAEA7-F9EC-408A-AB08-9B84CF7B971B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BervProject.MergePDF", "BervProject.MergePDF\BervProject.MergePDF.csproj", "{CCC88D06-4324-47DE-B184-696516A863D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BervProject.MergePDF", "BervProject.MergePDF\BervProject.MergePDF.csproj", "{CCC88D06-4324-47DE-B184-696516A863D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BervProject.MergePDF.GDrive", "BervProject.MergePDF.GDrive\BervProject.MergePDF.GDrive.csproj", "{FE530471-6D5A-42E8-B6B0-D1A13C42050B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BervProject.MergePDF.GDrive", "BervProject.MergePDF.GDrive\BervProject.MergePDF.GDrive.csproj", "{FE530471-6D5A-42E8-B6B0-D1A13C42050B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BervProject.MergePDFOnline.Console", "BervProject.MergePDFOnline.Console\BervProject.MergePDFOnline.Console.csproj", "{E7F5055E-E4D1-4BF0-87F0-C74941AD7583}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BervProject.MergePDFOnline.Console", "BervProject.MergePDFOnline.Console\BervProject.MergePDFOnline.Console.csproj", "{E7F5055E-E4D1-4BF0-87F0-C74941AD7583}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BervProject.MergePDF.S3", "BervProject.MergePDF.S3\BervProject.MergePDF.S3.csproj", "{8C91403F-DABF-48D0-A48C-000D5D2056F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BervProject.MergePDF.S3", "BervProject.MergePDF.S3\BervProject.MergePDF.S3.csproj", "{8C91403F-DABF-48D0-A48C-000D5D2056F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BervProject.MergePDF.Infra", "BervProject.MergePDF.Infra\BervProject.MergePDF.Infra.csproj", "{DF16FD0E-0A22-4F4D-87E9-1861D7E3B057}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BervProject.MergePDF.Lambda", "BervProject.MergePDF.Lambda\src\BervProject.MergePDF.Lambda\BervProject.MergePDF.Lambda.csproj", "{7F95DF68-2631-4763-9A1A-6ED56F0DF914}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{8C91403F-DABF-48D0-A48C-000D5D2056F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C91403F-DABF-48D0-A48C-000D5D2056F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C91403F-DABF-48D0-A48C-000D5D2056F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF16FD0E-0A22-4F4D-87E9-1861D7E3B057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF16FD0E-0A22-4F4D-87E9-1861D7E3B057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF16FD0E-0A22-4F4D-87E9-1861D7E3B057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF16FD0E-0A22-4F4D-87E9-1861D7E3B057}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F95DF68-2631-4763-9A1A-6ED56F0DF914}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F95DF68-2631-4763-9A1A-6ED56F0DF914}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F95DF68-2631-4763-9A1A-6ED56F0DF914}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F95DF68-2631-4763-9A1A-6ED56F0DF914}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

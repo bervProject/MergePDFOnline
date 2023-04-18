@@ -1,4 +1,4 @@
-name: dotnet package
+name: Build Project
 on:
   push:
     branches: [ main ]
@@ -17,3 +17,18 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build --configuration Release --no-restore
+  cdk:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.0.x'
+      - name: Install CDK
+        run: |
+          npm install -g aws-cdk
+          cdk doctor
+      - name: Synth
+        run: cdk synth
