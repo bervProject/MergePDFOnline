@@ -52,7 +52,7 @@ namespace BervProject.MergePDF.Infra
                 {
                     Minute = "0",
                     Hour = "10",
-                    WeekDay = "0",
+                    WeekDay = "1",
                     Month = "*",
                     Year = "*",
                 }),
