@@ -1,3 +1,4 @@
+using Amazon;
 using Amazon.Lambda.Annotations;
 using Amazon.Lambda.Core;
 using Amazon.SimpleEmail;
@@ -17,10 +18,11 @@ namespace BervProject.MergePDF.Lambda
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public Functions(IMerger merger, IAmazonSimpleEmailService amazonSimpleEmailService)
+        public Functions(IMerger merger)
         {
             _merger = merger;
-            _amazonSimpleEmailService = amazonSimpleEmailService;
+            var region = RegionEndpoint.GetBySystemName(Environment.GetEnvironmentVariable("SES_REGION") ?? "ap-southeast-1");
+            _amazonSimpleEmailService = new AmazonSimpleEmailServiceClient(region);
         }
 
         /// <summary>
