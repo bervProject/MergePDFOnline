@@ -42,7 +42,9 @@ namespace BervProject.MergePDF.Infra
                 }),
                 Environment = new Dictionary<string, string>
                 {
-                    { "S3__BucketName", System.Environment.GetEnvironmentVariable("BucketName") ?? "" }
+                    { "S3__BucketName", System.Environment.GetEnvironmentVariable("BucketName") ?? "" },
+                    { "TO_EMAIL", System.Environment.GetEnvironmentVariable("TO_EMAIL") ?? "" },
+                    { "FROM_EMAIL", System.Environment.GetEnvironmentVariable("FROM_EMAIL") ?? "" }
                 },
                 Role = role,
             });

@@ -59,9 +59,9 @@ namespace BervProject.MergePDF.Lambda
             {
                 Destination = new Destination
                 {
-                    ToAddresses = new List<string> { Environment.GetEnvironmentVariable("") ?? "" }
+                    ToAddresses = new List<string> { Environment.GetEnvironmentVariable("TO_EMAIL") ?? "" }
                 },
-                Source = Environment.GetEnvironmentVariable(""),
+                Source = Environment.GetEnvironmentVariable("FROM_EMAIL"),
                 Message = new Message
                 {
                     Subject = new Content

@@ -5,6 +5,8 @@ on:
     - main
 env:
   BucketName: ${{ secrets.MERGE_PDF_BUCKET }}
+  FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+  TO_EMAIL: ${{ secrets.TO_EMAIL }}
 
 jobs:
   cdk:
