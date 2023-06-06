@@ -38,9 +38,9 @@ namespace BervProject.MergePDF.Lambda
             {
                 var generatedTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
                 var destinationPath = $"merged/certificates-{generatedTimestamp}.pdf";
-                success = await _merger.Merge("certificates", destinationPath);
+                (success, var path) = await _merger.Merge("certificates", destinationPath);
                 context.Logger.LogInformation($"Result: {success}");
-                message = $"Success merge the result to: {destinationPath}";
+                message = $"Success merge the result to: {destinationPath}. You can check here: {path}";
             }
             catch (Exception ex)
             {

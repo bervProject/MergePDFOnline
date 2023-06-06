@@ -18,7 +18,7 @@ public class Uploader : IUploader
         _s3Settings = options.Value;
         _logger = logger;
     }
-    public async Task<bool> UploadAsync(Stream file, string destinationPath)
+    public async Task<(bool, string)> UploadAsync(Stream file, string destinationPath)
     {
         var putRequest = new PutObjectRequest
         {
@@ -29,6 +29,19 @@ public class Uploader : IUploader
         var uploadResponse = await _amazonS3Service.PutObjectAsync(putRequest);
         var httpStatusCode = uploadResponse.HttpStatusCode;
         _logger.LogInformation("Result: {HttpStatusCode}", httpStatusCode);
-        return uploadResponse is { HttpStatusCode: HttpStatusCode.OK };
+        var success = uploadResponse is { HttpStatusCode: HttpStatusCode.OK };
+        if (!success)
+        {
+            return (success, string.Empty);
+        }
+        var req = new GetPreSignedUrlRequest
+        {
+            BucketName = _s3Settings.BucketName,
+            Key = destinationPath,
+            Expires = DateTime.UtcNow.AddDays(1),
+            Verb = HttpVerb.GET
+        };
+        var result = _amazonS3Service.GetPreSignedURL(req);
+        return (success, result);
     }
 }
