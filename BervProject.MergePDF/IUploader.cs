@@ -2,5 +2,5 @@
 
 public interface IUploader
 {
-    public Task<bool> UploadAsync(Stream file, string destination);
+    public Task<(bool, string)> UploadAsync(Stream file, string destination);
 }

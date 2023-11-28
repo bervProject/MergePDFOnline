@@ -1,4 +1,5 @@
 using Amazon.S3;
+using Amazon.SimpleEmail;
 using BervProject.MergePDF.S3;
 using BervProject.MergePDF.S3.Models;
 
@@ -34,6 +35,7 @@ namespace BervProject.MergePDF.Lambda
             });
             services.Configure<S3Settings>(configuration.GetSection("S3"));
             services.AddAWSService<IAmazonS3>();
+            services.AddAWSService<IAmazonSimpleEmailService>();
             services.AddScoped<IDownloader, Downloader>();
             services.AddScoped<IPdfMerger, PdfMerger>();
             services.AddScoped<IUploader, Uploader>();

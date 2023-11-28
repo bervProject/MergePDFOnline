@@ -33,7 +33,8 @@ namespace BervProject.MergePDF.Infra
             var pdfMergerLambdaFunction = new Function(this, "PdfMerger", new FunctionProps
             {
                 Runtime = Runtime.DOTNET_6,
-                Timeout = Duration.Minutes(3),
+                Timeout = Duration.Minutes(1),
+                MemorySize = 512,
                 Handler = "BervProject.MergePDF.Lambda::BervProject.MergePDF.Lambda.Functions_Default_Generated::Default",
                 Code = Code.FromAsset(Directory.GetCurrentDirectory(), new Amazon.CDK.AWS.S3.Assets.AssetOptions
                 {
@@ -41,7 +42,9 @@ namespace BervProject.MergePDF.Infra
                 }),
                 Environment = new Dictionary<string, string>
                 {
-                    { "S3__BucketName", System.Environment.GetEnvironmentVariable("BucketName") ?? "" }
+                    { "S3__BucketName", System.Environment.GetEnvironmentVariable("BucketName") ?? "" },
+                    { "TO_EMAIL", System.Environment.GetEnvironmentVariable("TO_EMAIL") ?? "" },
+                    { "FROM_EMAIL", System.Environment.GetEnvironmentVariable("FROM_EMAIL") ?? "" }
                 },
                 Role = role,
             });
@@ -51,7 +54,7 @@ namespace BervProject.MergePDF.Infra
                 {
                     Minute = "0",
                     Hour = "10",
-                    Day = "1",
+                    WeekDay = "1",
                     Month = "*",
                     Year = "*",
                 }),

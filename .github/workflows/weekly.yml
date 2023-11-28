@@ -10,7 +10,7 @@ jobs:
       id-token: write   # This is required for requesting the JWT
       contents: read    # This is required for actions/checkout
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3
         with:
@@ -20,7 +20,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-session-name: ${{ secrets.AWS_ROLE_SESSION_NAME }}

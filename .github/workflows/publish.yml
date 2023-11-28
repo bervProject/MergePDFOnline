@@ -5,6 +5,8 @@ on:
     - main
 env:
   BucketName: ${{ secrets.MERGE_PDF_BUCKET }}
+  FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+  TO_EMAIL: ${{ secrets.TO_EMAIL }}
 
 jobs:
   cdk:
@@ -20,13 +22,13 @@ jobs:
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '7.0.x'
         dotnet-quality: 'preview'
     - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
         role-session-name: ${{ secrets.AWS_ROLE_SESSION_NAME }}
