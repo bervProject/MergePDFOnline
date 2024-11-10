@@ -49,7 +49,14 @@ namespace BervProject.MergePDF.Lambda
             }
             finally
             {
-                await SendEmail(success, message);
+                if (useEnhancedEmail)
+                {
+                    await SendEnhancedEmail(success, message);
+                }
+                else
+                {
+                    await SendEmail(success, message);
+                }
             }
 
 
