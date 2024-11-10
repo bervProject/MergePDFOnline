@@ -1,4 +1,5 @@
 using Amazon.CDK;
+using Amazon.CDK.AWS.AppConfig;
 using Amazon.CDK.AWS.Events;
 using Amazon.CDK.AWS.Events.Targets;
 using Amazon.CDK.AWS.IAM;
@@ -6,6 +7,7 @@ using Amazon.CDK.AWS.Lambda;
 using Constructs;
 using System.Collections.Generic;
 using System.IO;
+using Environment = Amazon.CDK.AWS.AppConfig.Environment;
 
 namespace BervProject.MergePDF.Infra
 {
@@ -15,20 +17,66 @@ namespace BervProject.MergePDF.Infra
         {
             // The code that defines your stack goes here
 
+            // Configure AppConfig
+            
+            var appConfig = new Application(this, "PdfMergerAppConfig", new ApplicationProps
+            {
+                ApplicationName = "pdf_merger"
+            });
+
+            var appConfigEnvironment = new Environment(this, "PdfMergerAppConfigEnvironment", new EnvironmentProps
+            {
+                Application = appConfig,
+                EnvironmentName = "dev",
+                Description = "PDF Merger Development Environment"
+            });
+
+            appConfig.AddHostedConfiguration("FeatureA", new HostedConfigurationOptions
+            {
+                Name = "feature_a",
+                Type = ConfigurationType.FEATURE_FLAGS,
+                Content = ConfigurationContent.FromInlineJson(@"{
+                    ""flags"": {
+                        ""use_enhanced_message"": {
+                             ""name"": ""Use Enhanced Message""
+                          }
+                    },
+                    ""values"": {
+                        ""use_enhanced_message"": {
+                            ""enabled"": true
+                        }
+                    },
+                    ""version"": ""1""
+                }"),
+                DeployTo = [appConfigEnvironment],
+                
+            });
+            
+            // Configure Role
+
             var role = Role.FromRoleName(this, "PDFMergeLambdaRole", "S3RoleLambda");
-            var buildOption = new BundlingOptions()
+
+            appConfigEnvironment.GrantReadConfig(role);
+            
+            // Configure Lambda
+
+            var appConfigLayer = LayerVersion.FromLayerVersionArn(this, "AppConfigExtension",
+                "arn:aws:lambda:ap-southeast-3:418787028745:layer:AWS-AppConfig-Extension:120");
+            
+            var buildOption = new BundlingOptions
             {
                 Image = Runtime.DOTNET_8.BundlingImage,
                 User = "root",
                 OutputType = BundlingOutput.ARCHIVED,
-                Command = new string[] {
-                   "/bin/sh",
+                Command =
+                [
+                    "/bin/sh",
                     "-c",
                     " dotnet tool install -g Amazon.Lambda.Tools"+
                     " && cd BervProject.MergePDF.Lambda/src/BervProject.MergePDF.Lambda" +
                     " && dotnet build --configuration Release"+
                     " && dotnet lambda package --output-package /asset-output/function.zip"
-                    }
+                ]
             };
             var pdfMergerLambdaFunction = new Function(this, "PdfMerger", new FunctionProps
             {
@@ -40,6 +88,7 @@ namespace BervProject.MergePDF.Infra
                 {
                     Bundling = buildOption
                 }),
+                Layers = [appConfigLayer],
                 Environment = new Dictionary<string, string>
                 {
                     { "S3__BucketName", System.Environment.GetEnvironmentVariable("BucketName") ?? "" },

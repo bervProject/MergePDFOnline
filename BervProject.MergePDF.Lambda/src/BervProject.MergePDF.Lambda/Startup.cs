@@ -40,6 +40,10 @@ namespace BervProject.MergePDF.Lambda
             services.AddScoped<IPdfMerger, PdfMerger>();
             services.AddScoped<IUploader, Uploader>();
             services.AddScoped<IMerger, Merger>();
+            services.AddHttpClient("AppConfig", client =>
+            {
+                client.BaseAddress = new Uri("http://localhost:2772");
+            });
         }
     }
 }
