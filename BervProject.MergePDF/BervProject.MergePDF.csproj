@@ -10,7 +10,7 @@
     <ItemGroup>
       <PackageReference Include="itext7" Version="8.0.5" />
       <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.5" />
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
     </ItemGroup>
 
 </Project>
