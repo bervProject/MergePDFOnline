@@ -41,7 +41,7 @@ public class Uploader : IUploader
             Expires = DateTime.UtcNow.AddDays(1),
             Verb = HttpVerb.GET
         };
-        var result = _amazonS3Service.GetPreSignedURL(req);
+        var result = await _amazonS3Service.GetPreSignedURLAsync(req);
         return (success, result);
     }
 }

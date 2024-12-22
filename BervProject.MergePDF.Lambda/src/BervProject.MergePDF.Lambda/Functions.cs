@@ -45,7 +45,10 @@ namespace BervProject.MergePDF.Lambda
                 var destinationPath = $"merged/certificates-{generatedTimestamp}.pdf";
                 (success, var path) = await _merger.Merge("certificates", destinationPath);
                 context.Logger.LogInformation($"Result: {success}");
-                message = useEnhancedEmail ? $"""Success merge the result to: <b>{destinationPath}</b>. You can check <a href="{path}">here</a>.""" : $"Success merge the result to: {destinationPath}. You can check here: {path}";
+                if (success)
+                {
+                    message = useEnhancedEmail ? $"""Success merge the result to: <b>{destinationPath}</b>. You can check <a href="{path}">here</a>.""" : $"Success merge the result to: {destinationPath}. You can check here: {path}";
+                }
             }
             catch (Exception ex)
             {
