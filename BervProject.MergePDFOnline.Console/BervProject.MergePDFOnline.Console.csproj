@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.301" />
+      <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.400" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.2" />
       <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.2" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
