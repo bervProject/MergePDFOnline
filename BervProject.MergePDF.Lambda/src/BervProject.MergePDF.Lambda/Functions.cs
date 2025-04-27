@@ -128,6 +128,7 @@ namespace BervProject.MergePDF.Lambda
                 {
                     var stream = await _downloader.DownloadFileAsync(attachmentPath);
                     await stream.CopyToAsync(memoryStream);
+                    memoryStream.Position = 0;
                     context.Logger.LogInformation($"Attachment: {attachmentPath}. File size: {memoryStream.Length} bytes.");
                     emailRequest.Content.Simple.Attachments =
                     [
