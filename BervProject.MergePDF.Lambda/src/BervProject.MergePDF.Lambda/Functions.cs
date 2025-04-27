@@ -61,7 +61,7 @@ namespace BervProject.MergePDF.Lambda
             }
             finally
             {
-                await SendEnhancedEmail(success, message, destinationPath);
+                await SendEnhancedEmail(context, success, message, destinationPath);
             }
         }
 
@@ -93,7 +93,7 @@ namespace BervProject.MergePDF.Lambda
             return false;
         }
         
-        private async Task SendEnhancedEmail(bool status, string bodyMessage, string attachmentPath = "")
+        private async Task SendEnhancedEmail(ILambdaContext context, bool status, string bodyMessage, string attachmentPath = "")
         {
             var emailRequest = new SendEmailRequest
             {
@@ -120,23 +120,31 @@ namespace BervProject.MergePDF.Lambda
                     }
                 }
             };
-            
-            using var memoryStream = new MemoryStream();
-
-            if (!string.IsNullOrEmpty(attachmentPath))
+            try
             {
-                var stream = await _downloader.DownloadFileAsync(attachmentPath);
-                await stream.CopyToAsync(memoryStream);
-                emailRequest.Content.Simple.Attachments = new List<Attachment>
+                using var memoryStream = new MemoryStream();
+
+                if (!string.IsNullOrEmpty(attachmentPath))
                 {
-                    new()
-                    {
-                        RawContent = memoryStream,
-                        FileName = "merged.pdf"
-                    }
-                };
+                    var stream = await _downloader.DownloadFileAsync(attachmentPath);
+                    await stream.CopyToAsync(memoryStream);
+                    context.Logger.LogInformation($"Attachment: {attachmentPath}. File size: {memoryStream.Length} bytes.");
+                    emailRequest.Content.Simple.Attachments =
+                    [
+                        new()
+                        {
+                            RawContent = memoryStream,
+                            FileName = "merged.pdf",
+                            ContentType = "application/pdf"
+                        }
+                    ];
+                }
+                var response = await _amazonSimpleEmailService.SendEmailAsync(emailRequest);
+                context.Logger.LogInformation($"Email sent. Message ID: {response.MessageId}");
+            } catch (Exception ex)
+            {
+                context.Logger.LogError(ex.Message);
             }
-            await _amazonSimpleEmailService.SendEmailAsync(emailRequest);
         }
 
     }
