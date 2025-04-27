@@ -1,4 +1,5 @@
-﻿using Amazon.S3;
+﻿using System.Net;
+using Amazon.S3;
 using Amazon.S3.Model;
 using BervProject.MergePDF.S3.Models;
 using Microsoft.Extensions.Logging;
@@ -70,13 +71,22 @@ public class Downloader : IDownloader
     }
 
     /// <inheritdoc />   
-    public async Task<Stream> DownloadFileAsync(string filePath)
+    public async Task<MemoryStream> DownloadFileAsync(string filePath)
     {
         var response = await _s3Service.GetObjectAsync(new GetObjectRequest
         {
             BucketName = _s3Settings.BucketName,
             Key = filePath
         });
-        return response.ResponseStream;
+        _logger.LogInformation("Response {HttpStatusCode}", response.HttpStatusCode);
+        var memoryStream = new MemoryStream();
+        if (response.HttpStatusCode != HttpStatusCode.OK)
+        {
+            return memoryStream;
+        }
+        var responseStream = response.ResponseStream;
+        await responseStream.CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+        return memoryStream;
     }
 }

@@ -43,12 +43,9 @@ public class Downloader : IDownloader
         return result;
     }
 
-    public async Task<Stream> DownloadFileAsync(string filePath)
+    public Task<MemoryStream> DownloadFileAsync(string filePath)
     {
-        var request = _driveService.Files.Get(filePath);
-        var stream = new MemoryStream();
-        await request.MediaDownloader.DownloadAsync(filePath, stream);
-        return stream;
+        return Task.FromResult(DownloadFile(_driveService, filePath));
     }
 
     private MemoryStream DownloadFile(DriveService driveService, string fileId)

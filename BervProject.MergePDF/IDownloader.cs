@@ -17,5 +17,5 @@ public interface IDownloader
     /// </summary>
     /// <param name="filePath">Source path</param>
     /// <returns>Stream file</returns>
-    Task<Stream> DownloadFileAsync(string filePath);
+    Task<MemoryStream> DownloadFileAsync(string filePath);
 }

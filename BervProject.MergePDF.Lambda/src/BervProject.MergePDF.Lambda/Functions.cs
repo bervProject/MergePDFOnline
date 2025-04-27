@@ -122,19 +122,16 @@ namespace BervProject.MergePDF.Lambda
             };
             try
             {
-                using var memoryStream = new MemoryStream();
 
                 if (!string.IsNullOrEmpty(attachmentPath))
                 {
                     var stream = await _downloader.DownloadFileAsync(attachmentPath);
-                    await stream.CopyToAsync(memoryStream);
-                    memoryStream.Position = 0;
-                    context.Logger.LogInformation($"Attachment: {attachmentPath}. File size: {memoryStream.Length} bytes.");
+                    context.Logger.LogInformation($"Attachment: {attachmentPath}. File size: {stream.Length} bytes.");
                     emailRequest.Content.Simple.Attachments =
                     [
                         new()
                         {
-                            RawContent = memoryStream,
+                            RawContent = stream,
                             FileName = "merged.pdf",
                             ContentType = "application/pdf"
                         }
