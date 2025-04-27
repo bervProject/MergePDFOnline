@@ -53,7 +53,10 @@ public class Downloader : IDownloader
                     };
                     var objectResponse = await _s3Service.GetObjectAsync(req);
                     var copyMemory = new MemoryStream();
-                    await objectResponse.ResponseStream.CopyToAsync(copyMemory);
+                    await using (var streamResponse = objectResponse.ResponseStream)
+                    {
+                        await streamResponse.CopyToAsync(copyMemory);
+                    }
                     copyMemory.Position = 0;
                     resultData.Add(copyMemory);
                 }
@@ -84,8 +87,11 @@ public class Downloader : IDownloader
         {
             return memoryStream;
         }
-        var responseStream = response.ResponseStream;
-        await responseStream.CopyToAsync(memoryStream);
+
+        await using (var responseStream = response.ResponseStream)
+        {
+            await responseStream.CopyToAsync(memoryStream);
+        }
         memoryStream.Position = 0;
         return memoryStream;
     }

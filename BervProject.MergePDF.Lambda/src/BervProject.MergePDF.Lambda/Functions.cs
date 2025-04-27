@@ -132,7 +132,7 @@ namespace BervProject.MergePDF.Lambda
                         new()
                         {
                             RawContent = stream,
-                            FileName = "merged.pdf",
+                            FileName = Path.GetFileName(attachmentPath),
                             ContentType = "application/pdf"
                         }
                     ];
