@@ -10,6 +10,7 @@ public interface IUploader
     /// </summary>
     /// <param name="file"></param>
     /// <param name="destination"></param>
+    /// <param name="contentType"></param>
     /// <returns></returns>
-    public Task<bool> UploadAsync(Stream file, string destination);
+    public Task<bool> UploadAsync(Stream file, string destination, string contentType);
 }

@@ -20,10 +20,12 @@ public class Merger : IMerger
         _uploader = uploader;
     }
 
-    public async Task<bool> Merge(string sourcePath, string destinationPath)
+    
+    /// <inheritdoc />
+    public async Task<bool> Merge(string sourcePath, string destinationPath, string contentType)
     {
         var downloadResult = await _downloader.DownloadFromFolderAsync(sourcePath);
         var mergedStream = _pdfMerger.MergeFiles(downloadResult);
-        return await _uploader.UploadAsync(mergedStream, destinationPath);
+        return await _uploader.UploadAsync(mergedStream, destinationPath, contentType);
     }
 }

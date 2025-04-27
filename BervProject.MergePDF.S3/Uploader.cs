@@ -18,13 +18,16 @@ public class Uploader : IUploader
         _s3Settings = options.Value;
         _logger = logger;
     }
-    public async Task<bool> UploadAsync(Stream file, string destinationPath)
+    
+    /// <inheritdoc />
+    public async Task<bool> UploadAsync(Stream file, string destinationPath, string contentType)
     {
         var putRequest = new PutObjectRequest
         {
             BucketName = _s3Settings.BucketName,
             Key = destinationPath,
-            InputStream = file
+            InputStream = file,
+            ContentType = contentType
         };
         var uploadResponse = await _amazonS3Service.PutObjectAsync(putRequest);
         var httpStatusCode = uploadResponse.HttpStatusCode;
