@@ -11,5 +11,5 @@ public interface IMerger
     /// <param name="sourcePath"></param>
     /// <param name="destinationPath"></param>
     /// <returns>Success/Failed</returns>
-    Task<(bool result, string resultPath)> Merge(string sourcePath, string destinationPath);
+    Task<bool> Merge(string sourcePath, string destinationPath);
 }

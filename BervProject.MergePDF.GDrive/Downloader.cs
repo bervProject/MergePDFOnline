@@ -17,7 +17,7 @@ public class Downloader : IDownloader
     }
     
     /// <inheritdoc />
-    public async Task<IReadOnlyCollection<Stream>> DownloadAsync(string folderPath)
+    public async Task<IReadOnlyCollection<Stream>> DownloadFromFolderAsync(string folderPath)
     {
         var result = new List<Stream>();
         var fileListRequest = _driveService.Files.List();
@@ -41,6 +41,14 @@ public class Downloader : IDownloader
         }
 
         return result;
+    }
+
+    public async Task<Stream> DownloadFileAsync(string filePath)
+    {
+        var request = _driveService.Files.Get(filePath);
+        var stream = new MemoryStream();
+        await request.MediaDownloader.DownloadAsync(filePath, stream);
+        return stream;
     }
 
     private MemoryStream DownloadFile(DriveService driveService, string fileId)

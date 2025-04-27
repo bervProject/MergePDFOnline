@@ -3,8 +3,8 @@ using System.Text.Json.Nodes;
 using Amazon;
 using Amazon.Lambda.Annotations;
 using Amazon.Lambda.Core;
-using Amazon.SimpleEmail;
-using Amazon.SimpleEmail.Model;
+using Amazon.SimpleEmailV2;
+using Amazon.SimpleEmailV2.Model;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 
@@ -16,16 +16,18 @@ namespace BervProject.MergePDF.Lambda
     public class Functions
     {
         private readonly IMerger _merger;
-        private readonly IAmazonSimpleEmailService _amazonSimpleEmailService;
+        private readonly IDownloader _downloader;
+        private readonly IAmazonSimpleEmailServiceV2 _amazonSimpleEmailService;
         private readonly HttpClient _httpClient;
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public Functions(IMerger merger, IHttpClientFactory httpClientFactory)
+        public Functions(IMerger merger, IHttpClientFactory httpClientFactory, IDownloader downloader)
         {
             _merger = merger;
+            _downloader = downloader;
             var region = RegionEndpoint.GetBySystemName(Environment.GetEnvironmentVariable("SES_REGION") ?? "ap-southeast-1");
-            _amazonSimpleEmailService = new AmazonSimpleEmailServiceClient(region);
+            _amazonSimpleEmailService = new AmazonSimpleEmailServiceV2Client(region);
             _httpClient = httpClientFactory.CreateClient("AppConfig");
         }
 
@@ -39,57 +41,28 @@ namespace BervProject.MergePDF.Lambda
             var useEnhancedEmail = await IsEnhancedEmail(context);
             var success = false;
             var message = useEnhancedEmail ? """<strong>Failed</strong> to merge.<br>""" : "Failed to merge. ";
+            var destinationPath = string.Empty;
             try
             {
                 var generatedTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-                var destinationPath = $"merged/certificates-{generatedTimestamp}.pdf";
-                (success, var path) = await _merger.Merge("certificates", destinationPath);
+                destinationPath = $"merged/certificates-{generatedTimestamp}.pdf";
+                success = await _merger.Merge("certificates", destinationPath);
                 context.Logger.LogInformation($"Result: {success}");
                 if (success)
                 {
-                    message = useEnhancedEmail ? $"""Success merge the result to: <b>{destinationPath}</b>. You can check <a href="{path}">here</a>.""" : $"Success merge the result to: {destinationPath}. You can check here: {path}";
+                    message = useEnhancedEmail ? $"""Success merge the result to: <b>{destinationPath}</b>. You can check the attached document.""" : $"Success merge the result to: {destinationPath}. You can check the attached document.";
                 }
             }
             catch (Exception ex)
             {
                 context.Logger.LogError(ex.Message);
+                destinationPath = string.Empty;
                 message += ex.Message;
             }
             finally
             {
-                if (useEnhancedEmail)
-                {
-                    await SendEnhancedEmail(success, message);
-                }
-                else
-                {
-                    await SendEmail(success, message);
-                }
+                await SendEnhancedEmail(success, message, destinationPath);
             }
-        }
-
-        private async Task SendEmail(bool status, string bodyMessage)
-        {
-            var emailRequest = new SendEmailRequest
-            {
-                Destination = new Destination
-                {
-                    ToAddresses = [Environment.GetEnvironmentVariable("TO_EMAIL") ?? ""]
-                },
-                Source = Environment.GetEnvironmentVariable("FROM_EMAIL"),
-                Message = new Message
-                {
-                    Subject = new Content
-                    {
-                        Data = $"PDF Merge Result - {(status ? "Success" : "Failed")}"
-                    },
-                    Body = new Body
-                    {
-                        Text = new Content { Data = bodyMessage },
-                    }
-                }
-            };
-            await _amazonSimpleEmailService.SendEmailAsync(emailRequest);
         }
 
         private async Task<bool> IsEnhancedEmail(ILambdaContext context)
@@ -120,7 +93,7 @@ namespace BervProject.MergePDF.Lambda
             return false;
         }
         
-        private async Task SendEnhancedEmail(bool status, string bodyMessage)
+        private async Task SendEnhancedEmail(bool status, string bodyMessage, string attachmentPath = "")
         {
             var emailRequest = new SendEmailRequest
             {
@@ -128,22 +101,41 @@ namespace BervProject.MergePDF.Lambda
                 {
                     ToAddresses = [Environment.GetEnvironmentVariable("TO_EMAIL") ?? ""]
                 },
-                Source = Environment.GetEnvironmentVariable("FROM_EMAIL"),
-                Message = new Message
+                FromEmailAddress = Environment.GetEnvironmentVariable("FROM_EMAIL"),
+                Content = new EmailContent
                 {
-                    Subject = new Content
+                    Simple = new Message
                     {
-                        Data = $"PDF Merge Result - {(status ? "Success" : "Failed")}"
-                    },
-                    Body = new Body
-                    {
-                        Html = new Content
+                        Subject = new Content
                         {
-                            Data = bodyMessage
+                            Data = $"PDF Merge Result - {(status ? "Success" : "Failed")}"
+                        },
+                        Body = new Body
+                        {
+                            Html = new Content
+                            {
+                                Data = bodyMessage
+                            }
                         }
                     }
                 }
             };
+            
+            using var memoryStream = new MemoryStream();
+
+            if (!string.IsNullOrEmpty(attachmentPath))
+            {
+                var stream = await _downloader.DownloadFileAsync(attachmentPath);
+                await stream.CopyToAsync(memoryStream);
+                emailRequest.Content.Simple.Attachments = new List<Attachment>
+                {
+                    new()
+                    {
+                        RawContent = memoryStream,
+                        FileName = "merged.pdf"
+                    }
+                };
+            }
             await _amazonSimpleEmailService.SendEmailAsync(emailRequest);
         }
 

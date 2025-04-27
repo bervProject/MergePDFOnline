@@ -1,6 +1,15 @@
 ﻿namespace BervProject.MergePDF;
 
+/// <summary>
+/// Uploader
+/// </summary>
 public interface IUploader
 {
-    public Task<(bool, string)> UploadAsync(Stream file, string destination);
+    /// <summary>
+    /// Upload handler
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="destination"></param>
+    /// <returns></returns>
+    public Task<bool> UploadAsync(Stream file, string destination);
 }
