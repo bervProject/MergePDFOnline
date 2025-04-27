@@ -30,5 +30,5 @@ var merger = serviceProvider.GetRequiredService<IMerger>();
 var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 var generatedTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
 var destinationPath = $"merged/certificates-{generatedTimestamp}.pdf";
-var (result, successPath) = await merger.Merge("certificates", destinationPath);
-logger.LogInformation("Result: {Result}. Link: {SuccessPath}", result, successPath);
+var result = await merger.Merge("certificates", destinationPath);
+logger.LogInformation("Result: {Result}.", result);

@@ -1,6 +1,4 @@
-﻿using System.Collections.Concurrent;
-
-namespace BervProject.MergePDF;
+﻿namespace BervProject.MergePDF;
 
 /// <summary>
 /// Downloader
@@ -8,9 +6,16 @@ namespace BervProject.MergePDF;
 public interface IDownloader
 {
     /// <summary>
-    /// Downloader handle
+    /// Download from folder handler
     /// </summary>
     /// <param name="folderPath">Source path</param>
     /// <returns>Enumerable of streams</returns>
-    Task<IReadOnlyCollection<Stream>> DownloadAsync(string folderPath);
+    Task<IReadOnlyCollection<Stream>> DownloadFromFolderAsync(string folderPath);
+    
+    /// <summary>
+    /// Download File handler
+    /// </summary>
+    /// <param name="filePath">Source path</param>
+    /// <returns>Stream file</returns>
+    Task<Stream> DownloadFileAsync(string filePath);
 }

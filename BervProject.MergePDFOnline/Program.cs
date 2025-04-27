@@ -73,7 +73,7 @@ app.MapGet("/drive", [GoogleScopedAuthorize(DriveService.ScopeConstants.Drive)]
             [FromServices] IOptions<GoogleDriveSettings> options) =>
         {
             var path = options.Value.Query;
-            var result = await downloader.DownloadAsync(path);
+            var result = await downloader.DownloadFromFolderAsync(path);
             var mergeResult = merger.MergeFiles(result);
             return Results.File(mergeResult, "application/pdf");
         })

@@ -21,7 +21,7 @@ public class Downloader : IDownloader
     }
 
     /// <inheritdoc />
-    public async Task<IReadOnlyCollection<Stream>> DownloadAsync(string folderPath)
+    public async Task<IReadOnlyCollection<Stream>> DownloadFromFolderAsync(string folderPath)
     {
         var resultData = new List<Stream>();
         var listObjectRequest = new ListObjectsV2Request
@@ -67,5 +67,16 @@ public class Downloader : IDownloader
         } while (!getAll);
 
         return resultData;
+    }
+
+    /// <inheritdoc />   
+    public async Task<Stream> DownloadFileAsync(string filePath)
+    {
+        var response = await _s3Service.GetObjectAsync(new GetObjectRequest
+        {
+            BucketName = _s3Settings.BucketName,
+            Key = filePath
+        });
+        return response.ResponseStream;
     }
 }
