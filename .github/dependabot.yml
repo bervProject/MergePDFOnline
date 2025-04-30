@@ -10,7 +10,7 @@ updates:
   groups:
     awssdk:
       patterns:
-        - 'AWSSDK*'
+        - "AWSSDK*"
 - package-ecosystem: docker
   directory: "/"
   schedule:
