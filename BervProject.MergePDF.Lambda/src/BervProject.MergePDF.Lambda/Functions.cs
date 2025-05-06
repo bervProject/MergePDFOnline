@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Amazon;
@@ -93,6 +94,31 @@ namespace BervProject.MergePDF.Lambda
             return false;
         }
         
+        /// <summary>
+        /// Compresses a stream into a zip file
+        /// </summary>
+        /// <param name="inputStream">The stream to compress</param>
+        /// <param name="fileName">The name of the file inside the zip</param>
+        /// <returns>A memory stream containing the zipped content</returns>
+        private MemoryStream CompressToZip(Stream inputStream, string fileName)
+        {
+            var outputStream = new MemoryStream();
+            
+            using (var zipArchive = new ZipArchive(outputStream, ZipArchiveMode.Create, true))
+            {
+                var entry = zipArchive.CreateEntry(fileName, CompressionLevel.Optimal);
+                
+                using (var entryStream = entry.Open())
+                {
+                    inputStream.Position = 0;
+                    inputStream.CopyTo(entryStream);
+                }
+            }
+            
+            outputStream.Position = 0;
+            return outputStream;
+        }
+
         private async Task SendEnhancedEmail(ILambdaContext context, bool status, string bodyMessage, string attachmentPath = "")
         {
             var emailRequest = new SendEmailRequest
@@ -130,7 +156,7 @@ namespace BervProject.MergePDF.Lambda
                     // Check if the stream has content
                     if (stream != null && stream.Length > 0)
                     {
-                        context.Logger.LogInformation($"Attachment: {attachmentPath}. File size: {stream.Length} bytes.");
+                        context.Logger.LogInformation($"Attachment: {attachmentPath}. Original file size: {stream.Length} bytes.");
                         
                         // Check if file size is within SES limits (40MB)
                         if (stream.Length > 40 * 1024 * 1024)
@@ -141,19 +167,56 @@ namespace BervProject.MergePDF.Lambda
                         }
                         else
                         {
-                            // Create a copy of the stream to ensure it's properly positioned and won't be disposed
-                            byte[] fileBytes = stream.ToArray();
-                            var attachmentStream = new MemoryStream(fileBytes);
-                            
-                            emailRequest.Content.Simple.Attachments =
-                            [
-                                new()
+                            try
+                            {
+                                string fileName = Path.GetFileName(attachmentPath);
+                                
+                                // Compress the PDF if it's larger than 5MB
+                                if (stream.Length > 5 * 1024 * 1024)
                                 {
-                                    RawContent = attachmentStream,
-                                    FileName = Path.GetFileName(attachmentPath),
-                                    ContentType = "application/pdf"
+                                    context.Logger.LogInformation($"Compressing PDF file of size {stream.Length} bytes");
+                                    
+                                    // Compress the stream to a zip file
+                                    var zipStream = CompressToZip(stream, fileName);
+                                    
+                                    context.Logger.LogInformation($"Compressed to {zipStream.Length} bytes (ratio: {(double)zipStream.Length / stream.Length:P2})");
+                                    
+                                    // Use the compressed stream for the attachment
+                                    emailRequest.Content.Simple.Attachments =
+                                    [
+                                        new()
+                                        {
+                                            RawContent = zipStream,
+                                            FileName = $"{Path.GetFileNameWithoutExtension(fileName)}.zip",
+                                            ContentType = "application/zip"
+                                        }
+                                    ];
+                                    
+                                    // Update the email body to mention compression
+                                    emailRequest.Content.Simple.Body.Html.Data += "<br><br>The PDF has been compressed to a ZIP file to reduce size.";
                                 }
-                            ];
+                                else
+                                {
+                                    // For smaller files, use the original PDF without compression
+                                    byte[] fileBytes = stream.ToArray();
+                                    var attachmentStream = new MemoryStream(fileBytes);
+                                    
+                                    emailRequest.Content.Simple.Attachments =
+                                    [
+                                        new()
+                                        {
+                                            RawContent = attachmentStream,
+                                            FileName = fileName,
+                                            ContentType = "application/pdf"
+                                        }
+                                    ];
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                context.Logger.LogError($"Error compressing attachment: {ex.Message}");
+                                emailRequest.Content.Simple.Body.Html.Data += "<br><br>There was an error processing the PDF attachment.";
+                            }
                         }
                     }
                     else
