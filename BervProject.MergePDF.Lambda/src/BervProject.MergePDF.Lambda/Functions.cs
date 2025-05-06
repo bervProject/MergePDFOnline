@@ -132,10 +132,10 @@ namespace BervProject.MergePDF.Lambda
                     {
                         context.Logger.LogInformation($"Attachment: {attachmentPath}. File size: {stream.Length} bytes.");
                         
-                        // Check if file size is within SES limits (10MB)
-                        if (stream.Length > 10 * 1024 * 1024)
+                        // Check if file size is within SES limits (40MB)
+                        if (stream.Length > 40 * 1024 * 1024)
                         {
-                            context.Logger.LogWarning($"Attachment size ({stream.Length} bytes) exceeds SES limit of 10MB. Skipping attachment.");
+                            context.Logger.LogWarning($"Attachment size ({stream.Length} bytes) exceeds SES limit of 40MB. Skipping attachment.");
                             // Add a message to the email body about the large attachment
                             emailRequest.Content.Simple.Body.Html.Data += "<br><br>The merged PDF was too large to attach to this email.";
                         }
