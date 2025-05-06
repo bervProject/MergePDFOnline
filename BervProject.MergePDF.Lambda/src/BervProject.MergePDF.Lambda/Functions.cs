@@ -122,26 +122,55 @@ namespace BervProject.MergePDF.Lambda
             };
             try
             {
-
                 if (!string.IsNullOrEmpty(attachmentPath))
                 {
+                    // Download the file from S3
                     var stream = await _downloader.DownloadFileAsync(attachmentPath);
-                    context.Logger.LogInformation($"Attachment: {attachmentPath}. File size: {stream.Length} bytes.");
-                    emailRequest.Content.Simple.Attachments =
-                    [
-                        new()
+                    
+                    // Check if the stream has content
+                    if (stream != null && stream.Length > 0)
+                    {
+                        context.Logger.LogInformation($"Attachment: {attachmentPath}. File size: {stream.Length} bytes.");
+                        
+                        // Check if file size is within SES limits (10MB)
+                        if (stream.Length > 10 * 1024 * 1024)
                         {
-                            RawContent = stream,
-                            FileName = Path.GetFileName(attachmentPath),
-                            ContentType = "application/pdf"
+                            context.Logger.LogWarning($"Attachment size ({stream.Length} bytes) exceeds SES limit of 10MB. Skipping attachment.");
+                            // Add a message to the email body about the large attachment
+                            emailRequest.Content.Simple.Body.Html.Data += "<br><br>The merged PDF was too large to attach to this email.";
                         }
-                    ];
+                        else
+                        {
+                            // Create a copy of the stream to ensure it's properly positioned and won't be disposed
+                            byte[] fileBytes = stream.ToArray();
+                            var attachmentStream = new MemoryStream(fileBytes);
+                            
+                            emailRequest.Content.Simple.Attachments =
+                            [
+                                new()
+                                {
+                                    RawContent = attachmentStream,
+                                    FileName = Path.GetFileName(attachmentPath),
+                                    ContentType = "application/pdf"
+                                }
+                            ];
+                        }
+                    }
+                    else
+                    {
+                        context.Logger.LogError($"Failed to download attachment or attachment is empty: {attachmentPath}");
+                        emailRequest.Content.Simple.Body.Html.Data += "<br><br>The PDF attachment could not be retrieved.";
+                    }
                 }
+                
                 var response = await _amazonSimpleEmailService.SendEmailAsync(emailRequest);
                 context.Logger.LogInformation($"Email sent. Message ID: {response.MessageId}");
-            } catch (Exception ex)
+            } 
+            catch (Exception ex)
             {
-                context.Logger.LogError(ex.Message);
+                context.Logger.LogError($"Error sending email: {ex.Message}");
+                // Log the full exception for debugging
+                context.Logger.LogError(ex.ToString());
             }
         }
 
