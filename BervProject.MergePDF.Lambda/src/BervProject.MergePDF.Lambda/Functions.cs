@@ -151,7 +151,8 @@ namespace BervProject.MergePDF.Lambda
                                 {
                                     RawContent = attachmentStream,
                                     FileName = Path.GetFileName(attachmentPath),
-                                    ContentType = "application/pdf"
+                                    ContentType = "application/pdf",
+                                    ContentTransferEncoding = "BASE64"
                                 }
                             ];
                         }
