@@ -65,7 +65,7 @@ namespace BervProject.MergePDF.Infra
             
             var buildOption = new BundlingOptions
             {
-                Image = Runtime.DOTNET_8.BundlingImage,
+                Image = Runtime.DOTNET_9.BundlingImage,
                 User = "root",
                 OutputType = BundlingOutput.ARCHIVED,
                 Command =
@@ -80,7 +80,7 @@ namespace BervProject.MergePDF.Infra
             };
             var pdfMergerLambdaFunction = new Function(this, "PdfMerger", new FunctionProps
             {
-                Runtime = Runtime.DOTNET_8,
+                Runtime = Runtime.DOTNET_9,
                 Timeout = Duration.Minutes(1),
                 MemorySize = 512,
                 Handler = "BervProject.MergePDF.Lambda::BervProject.MergePDF.Lambda.Functions_Default_Generated::Default",
