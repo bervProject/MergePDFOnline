@@ -17,7 +17,7 @@
     <PackageReference Include="Amazon.Lambda.Core" Version="2.6.0" />
     <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />
     <PackageReference Include="Amazon.Lambda.Annotations" Version="1.7.0" />
-    <PackageReference Include="AWSSDK.SimpleEmailV2" Version="4.0.2.1" />
+    <PackageReference Include="AWSSDK.SimpleEmailV2" Version="4.0.3" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.6" />
   </ItemGroup>
   <ItemGroup>
