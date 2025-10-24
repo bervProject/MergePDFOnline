@@ -18,7 +18,7 @@
     <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />
     <PackageReference Include="Amazon.Lambda.Annotations" Version="1.7.0" />
     <PackageReference Include="AWSSDK.SimpleEmailV2" Version="4.0.5.9" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.10" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\BervProject.MergePDF.S3\BervProject.MergePDF.S3.csproj" />
