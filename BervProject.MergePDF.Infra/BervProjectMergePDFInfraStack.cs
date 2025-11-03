@@ -80,7 +80,7 @@ namespace BervProject.MergePDF.Infra
             };
             var pdfMergerLambdaFunction = new Function(this, "PdfMerger", new FunctionProps
             {
-                Runtime = Runtime.DOTNET_9,
+                Runtime = Runtime.DOTNET_8,
                 Timeout = Duration.Minutes(1),
                 MemorySize = 512,
                 Handler = "BervProject.MergePDF.Lambda::BervProject.MergePDF.Lambda.Functions_Default_Generated::Default",
