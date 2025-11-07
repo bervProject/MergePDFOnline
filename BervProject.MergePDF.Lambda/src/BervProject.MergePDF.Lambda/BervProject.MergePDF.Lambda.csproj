@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0-rc.2.25502.107" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AWSSDK.S3" Version="4.0.10" />
+    <PackageReference Include="AWSSDK.S3" Version="4.0.11" />
     <ProjectReference Include="..\..\..\BervProject.MergePDF.S3\BervProject.MergePDF.S3.csproj" />
   </ItemGroup>
 </Project>
