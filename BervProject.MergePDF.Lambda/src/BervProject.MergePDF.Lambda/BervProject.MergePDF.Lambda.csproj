@@ -13,11 +13,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.Logging.AspNetCore" Version="4.1.1" />
-    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.17" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.18" />
     <PackageReference Include="Amazon.Lambda.Core" Version="2.8.0" />
     <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />
     <PackageReference Include="Amazon.Lambda.Annotations" Version="1.8.0" />
-    <PackageReference Include="AWSSDK.SimpleEmailV2" Version="4.0.11" />
+    <PackageReference Include="AWSSDK.SimpleEmailV2" Version="4.0.11.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0" />
   </ItemGroup>
   <ItemGroup>
