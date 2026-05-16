@@ -18,7 +18,7 @@ namespace BervProject.MergePDF.Infra
             // The code that defines your stack goes here
 
             // Configure AppConfig
-            
+
             var appConfig = new Application(this, "PdfMergerAppConfig", new ApplicationProps
             {
                 ApplicationName = "pdf_merger"
@@ -49,23 +49,23 @@ namespace BervProject.MergePDF.Infra
                     ""version"": ""1""
                 }"),
                 DeployTo = [appConfigEnvironment],
-                
+
             });
-            
+
             // Configure Role
 
             var role = Role.FromRoleName(this, "PDFMergeLambdaRole", "S3RoleLambda");
 
             appConfigEnvironment.GrantReadConfig(role);
-            
+
             // Configure Lambda
 
             var appConfigLayer = LayerVersion.FromLayerVersionArn(this, "AppConfigExtension",
                 "arn:aws:lambda:ap-southeast-3:418787028745:layer:AWS-AppConfig-Extension:120");
-            
+
             var buildOption = new BundlingOptions
             {
-                Image = Runtime.DOTNET_9.BundlingImage,
+                Image = Runtime.DOTNET_10.BundlingImage,
                 User = "root",
                 OutputType = BundlingOutput.ARCHIVED,
                 Command =
@@ -80,7 +80,7 @@ namespace BervProject.MergePDF.Infra
             };
             var pdfMergerLambdaFunction = new Function(this, "PdfMerger", new FunctionProps
             {
-                Runtime = Runtime.DOTNET_8,
+                Runtime = Runtime.DOTNET_10,
                 Timeout = Duration.Minutes(1),
                 MemorySize = 512,
                 Handler = "BervProject.MergePDF.Lambda::BervProject.MergePDF.Lambda.Functions_Default_Generated::Default",
