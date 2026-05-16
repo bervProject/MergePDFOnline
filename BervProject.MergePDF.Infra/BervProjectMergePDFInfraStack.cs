@@ -65,7 +65,7 @@ namespace BervProject.MergePDF.Infra
 
             var buildOption = new BundlingOptions
             {
-                Image = Runtime.DOTNET_9.BundlingImage,
+                Image = Runtime.DOTNET_10.BundlingImage,
                 User = "root",
                 OutputType = BundlingOutput.ARCHIVED,
                 Command =
